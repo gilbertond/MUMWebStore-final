@@ -18,6 +18,7 @@ resources:
   - name: MUMWebStore-rc
     type: s3
     source:
+       url: http://192.168.99.100:8081/repository/gilbertoRepo/
        bucket: mumwebstore-artifacts
        regexp: MUMWebStore-(.*).tgz
        access_key_id: ""
@@ -26,6 +27,7 @@ resources:
   - name: MUMWebStore-final
     type: s3
     source:
+      url: http://192.168.99.100:8081/repository/gilbertoRepo/
       bucket: mumwebstore
       regexp: MUMWebStore-(.*).tgz
       access_key_id: ""
