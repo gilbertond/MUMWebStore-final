@@ -1,0 +1,199 @@
+resources:
+  - name: gildock_dockerfile
+    type: git
+    source:
+      uri: https://github.com/gilbertond/concourse.git
+      branch: master
+      paths:  [Dockerfile]
+
+  - name: MUMWebStore-version
+    type: semver
+    source:
+       bucket: MUMWebStore-artifacts
+       initial_version: 1.0.0
+       key: current-version
+       access_key_id: ""
+       secret_access_key: ""
+
+  - name: MUMWebStore-rc
+    type: s3
+    source:
+       bucket: MUMWebStore-artifacts
+       regexp: MUMWebStore-(.*).tgz
+       access_key_id: ""
+       secret_access_key: ""
+       
+  - name: MUMWebStore-final
+    type: s3
+    source:
+      bucket: MUMWebStore
+      regexp: MUMWebStore-(.*).tgz
+      access_key_id: ""
+      secret_access_key: ""
+    
+  - name: gildock_docker_build
+    type: docker-image
+    source:
+      repository: gilbertond/gildock
+      email:  ryumugil@gmail.com
+      username: gilbertond
+      password: gillygilly
+
+  - name: hello-artifact
+    type: time
+    source: {interval: 1m}
+  - name: release-artifact
+    type: time
+    
+  - name: MUMWebStore-git
+    type: git
+    source:
+        uri: https://github.com/gilbertond/MUMWebStore-final.git
+        branch: master
+
+jobs:
+  - name: gildock_image_build_job
+    plan:
+      - get: release-artifact
+        passed: [anotherJob]
+        trigger:    true
+#      - get:  hello-artifact
+      - get:  gildock_dockerfile        
+        trigger:  true
+      - put:  gildock_docker_build
+        params: {build: gildock_dockerfile}
+        
+  - name: getMUMWebStore
+    plan:
+    - get: MUMWebStore-git
+      trigger: true
+    - task: package
+      privileged: true
+      file: MUMWebStore-git/ci/tasks/package.yml
+    - get: gildock_docker_build
+      passed: [gildock_image_build_job]
+    - put: MUMWebStore-git
+
+  - name: unit
+    plan:
+    - get: MUMWebStore-final
+      trigger: true
+    - task: unit
+      file: MUMWebStore/unit.yml
+
+  - name: build-rc
+    serial_groups:
+    - version
+    plan:
+    - get: MUMWebStore-final
+      passed: [unit]
+      trigger: true
+    - get: MUMWebStore-version
+      params: {pre: rc}
+    - task: build-artifact
+      file: MUMWebStore/build-artifact.yml
+    - put: MUMWebStore-rc
+      params: {file: build-artifact/MUMWebStore-*.tgz}
+    - put: MUMWebStore-version
+      params: {file: MUMWebStore-version/version}
+
+  - name: MUMWebStore-integration
+    serial: true
+    plan:
+    - get: MUMWebStore-rc
+      passed: [build-rc]
+      trigger: true
+    - get: MUMWebStore-final
+      passed: [build-rc]
+    - task: integration
+      file: MUMWebStore/integration.yml
+#      config:
+#        params:
+#          ACCESS_KEY: ""
+#          API_ENDPOINT: ""
+
+  - name: MUMWebStore-package
+    serial_groups: [MUMWebStore-version]
+    plan:
+    - get: MUMWebStore-rc
+      passed: [MUMWebStore-integration]
+    - get: MUMWebStore-final
+      passed: [MUMWebStore-integration]
+    - get: MUMWebStore-version
+      params: {bump: final}
+    - task: promote-to-final
+      file: MUMWebStore/promote-to-final.yml
+    - put: MUMWebStore-final
+      params: {file: promote-to-final/MUMWebStore-.*.tgz}
+    - put: MUMWebStore-version
+      params: {file: MUMWebStore-version/version}
+
+  - name: my-timer
+    plan:
+      - get: hello-artifact       
+      - task: timerTask
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository:  gilbertond/gildock}
+          run:
+            path: echo
+            args: ["Gilberto is concoursing........."]
+            
+  - name: anotherJob
+    plan:
+      - get: hello-artifact
+      - put: release-artifact
+  
+  - name: major
+    plan:
+      - put: MUMWebStore-version
+        params: {bump: major, pre: rc}
+
+  - name: minor
+    plan:
+      - put: MUMWebStore-version
+        params: {bump: minor, pre: rc}
+
+  - name: patch
+    plan:
+      - get: MUMWebStore-version
+        passed: [MUMWebStore-package]
+        trigger: true
+      - put: MUMWebStore-version
+        params: {bump: minor, pre: rc}
+  
+groups:
+- name: the-world
+  jobs:
+  - anotherJob
+  - gildock_image_build_job
+  - my-timer
+  - getMUMWebStore
+  - patch
+  - minor
+  - major
+  - MUMWebStore-package
+  - MUMWebStore-integration
+  - build-rc
+  - unit
+  
+- name: group1
+  jobs:
+  - gildock_image_build_job
+  
+- name: group2
+  jobs:
+  - getMUMWebStore
+  - my-timer
+
+- name: versioning
+  jobs:
+  - patch
+  - minor
+  - major
+  - MUMWebStore-package
+  - MUMWebStore-integration
+  - build-rc
+  - unit
