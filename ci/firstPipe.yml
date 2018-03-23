@@ -9,7 +9,7 @@ resources:
   - name: MUMWebStore-version
     type: semver
     source:
-       bucket: MUMWebStore-artifacts
+       bucket: mumwebstore-artifacts
        initial_version: 1.0.0
        key: current-version
        access_key_id: ""
@@ -18,7 +18,7 @@ resources:
   - name: MUMWebStore-rc
     type: s3
     source:
-       bucket: MUMWebStore-artifacts
+       bucket: mumwebstore-artifacts
        regexp: MUMWebStore-(.*).tgz
        access_key_id: ""
        secret_access_key: ""
@@ -26,7 +26,7 @@ resources:
   - name: MUMWebStore-final
     type: s3
     source:
-      bucket: MUMWebStore
+      bucket: mumwebstore
       regexp: MUMWebStore-(.*).tgz
       access_key_id: ""
       secret_access_key: ""
@@ -72,7 +72,7 @@ jobs:
       file: MUMWebStore-git/ci/tasks/package.yml
     - get: gildock_docker_build
       passed: [gildock_image_build_job]
-    - put: MUMWebStore-git
+#    - put: MUMWebStore-git
 
   - name: unit
     plan:
