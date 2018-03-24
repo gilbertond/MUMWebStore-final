@@ -69,19 +69,19 @@ jobs:
     plan:
     - get: MUMWebStore-git
       trigger: true
-    - task: package
-      privileged: true
-      file: MUMWebStore-git/ci/tasks/package.yml
-    - get: gildock_docker_build
-      passed: [gildock_image_build_job]
+#    - task: package
+#      privileged: true
+#      file: MUMWebStore-git/ci/tasks/package.yml
+#    - get: gildock_docker_build
+#      passed: [gildock_image_build_job]
 #    - put: MUMWebStore-git
 
   - name: unit
     plan:
     - get: MUMWebStore-final
       trigger: true
-#    - task: unit
-#      file: MUMWebStore/unit.yml
+    - task: unit
+      file: MUMWebStore/unit.yml
 
   - name: build-rc
     serial_groups:
