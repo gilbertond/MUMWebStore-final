@@ -11,5 +11,5 @@ inputs:
 
 run:
   path: echo
-  args: MUMWebStore-git/ci/tasks/
+  args: [MUMWebStore-git/ci/tasks/]
   path: MUMWebStore-git/ci/tasks/package.bat
