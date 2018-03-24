@@ -9,7 +9,7 @@ resources:
   - name: MUMWebStore-version
     type: semver
     source:
-       endpoint: 192.168.99.100:9000
+       endpoint: http://192.168.99.100:9000
        bucket: mumwebstore-artifacts
        initial_version: 1.0.0
        key: current-version
@@ -19,7 +19,7 @@ resources:
   - name: MUMWebStore-rc
     type: s3
     source:
-       endpoint: 192.168.99.100:9000 #http://192.168.99.100:8081/repository/gilbertoRepo/
+       endpoint: http://192.168.99.100:9000 #http://192.168.99.100:8081/repository/gilbertoRepo/
        bucket: mumwebstore-artifacts
        regexp: MUMWebStore-(.*).tgz
        access_key_id: W8HNY61F0148TEY5MR1R
@@ -28,7 +28,7 @@ resources:
   - name: MUMWebStore-final
     type: s3
     source:
-      endpoint: 192.168.99.100:9000 #http://192.168.99.100:8081/repository/gilbertoRepo/
+      endpoint: http://192.168.99.100:9000 #http://192.168.99.100:8081/repository/gilbertoRepo/
       bucket: mumwebstore
       regexp: MUMWebStore-(.*).tgz
       access_key_id: W8HNY61F0148TEY5MR1R
