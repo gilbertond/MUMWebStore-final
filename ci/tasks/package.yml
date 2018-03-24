@@ -7,7 +7,7 @@ image_resource:
     tag: "8"
 
 inputs:
-- name: source-code
+- name: MUMWebStore-git
 
 run:
   path: MUMWebStore-git/ci/tasks/package.bat
