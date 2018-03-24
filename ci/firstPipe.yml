@@ -13,8 +13,8 @@ resources:
        bucket: mumwebstore-artifacts
        initial_version: 1.0.0
        key: current-version
-       access_key_id: "W8HNY61F0148TEY5MR1R"
-       secret_access_key: "EYXnWirGSHSa2acTZUq6WxJGFEQLJT98IhqRAF6v"
+       access_key_id: W8HNY61F0148TEY5MR1R
+       secret_access_key: EYXnWirGSHSa2acTZUq6WxJGFEQLJT98IhqRAF6v
 
   - name: MUMWebStore-rc
     type: s3
@@ -22,8 +22,8 @@ resources:
        url: http://127.0.0.1:9000 #http://192.168.99.100:8081/repository/gilbertoRepo/
        bucket: mumwebstore-artifacts
        regexp: MUMWebStore-(.*).tgz
-       access_key_id: "W8HNY61F0148TEY5MR1R"
-       secret_access_key: "EYXnWirGSHSa2acTZUq6WxJGFEQLJT98IhqRAF6v"
+       access_key_id: W8HNY61F0148TEY5MR1R
+       secret_access_key: EYXnWirGSHSa2acTZUq6WxJGFEQLJT98IhqRAF6v
        
   - name: MUMWebStore-final
     type: s3
@@ -31,8 +31,8 @@ resources:
       url: http://127.0.0.1:9000 #http://192.168.99.100:8081/repository/gilbertoRepo/
       bucket: mumwebstore
       regexp: MUMWebStore-(.*).tgz
-      access_key_id: "W8HNY61F0148TEY5MR1R"
-      secret_access_key: "EYXnWirGSHSa2acTZUq6WxJGFEQLJT98IhqRAF6v"
+      access_key_id: W8HNY61F0148TEY5MR1R
+      secret_access_key: EYXnWirGSHSa2acTZUq6WxJGFEQLJT98IhqRAF6v
     
   - name: gildock_docker_build
     type: docker-image
