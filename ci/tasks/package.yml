@@ -10,6 +10,5 @@ inputs:
 - name: MUMWebStore-git
 
 run:
-  path: echo
-  args: ["---------------------------Build mvc Project----------------------"]
-  path: MUMWebStore-git/ci/tasks/package.sh
+  path: bash
+  args: [./MUMWebStore-git/ci/tasks/package.sh]
