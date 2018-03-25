@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e -u -x
-echo MUMWebStore-git/
+chmod +x MUMWebStore-git/ci/tasks/package.sh
+chmod +x MUMWebStore-git/mvnw
 cd MUMWebStore-git/
-chmod +x ci/tasks/package.sh
 ./mvnw package
